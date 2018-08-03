@@ -1,0 +1,5 @@
+package-lock.json
+data/*.json
+data/__pycache__
+data/config.py
+node_modules

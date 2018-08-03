@@ -1,0 +1,55 @@
+@font-face {
+	font-family: 'Hemi Head Rg';
+	src: url('../fonts/hemi_head.ttf') format('truetype');
+}
+body { 
+	margin: 0; 
+} 
+.navbar { 
+	padding: 0 1rem; 
+	background-color: rgb(55, 90, 127, 0.3); 
+	z-index: 1; 
+}
+.navbar-brand {
+	font-family: 'Hemi Head Rg';
+}
+.navbar-nav {
+	padding: 0px 0 0 0;
+}
+@media (min-width: 576px) {
+	.modal-dialog {
+		max-width: 576px;
+	}
+}
+.modal-content {
+	background-color: rgb(13, 27, 50); 
+}
+.graph {
+	position:absolute;
+	top:0;
+	z-index:0;
+}
+.snapshot {
+	position:fixed;
+	bottom:0;
+	right:0;
+	margin:5px;
+	color:slategrey;
+	opacity:0.7;
+	font-family:Sans-serif;
+	font-size:10px;
+	z-index:1;
+}
+.form-control {
+	background-color: rgb(13, 27, 50);
+	color: white;
+	border-color: #444;
+}
+#stats { 
+	position: absolute; 
+	top: 10px; 
+	left: 5px;
+}
+.fa, .fab, .fas {
+	margin-right: 8px;
+}
