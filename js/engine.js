@@ -167,11 +167,17 @@ function nodeLabel(node){
 }
 
 
+function nodeSpriteText(text, color, height){
+	let spriteText = new SpriteText(text);
+	spriteText.fontSize = 36;
+	spriteText.color = color;
+	spriteText.textHeight = height;
+	return spriteText;
+}
+
+
 function nodeThreeObject(node){
 	let group = new THREE.Group();
-	let t = new SpriteText(node.id);
-	t.fontSize = 36;
-	t.color = node.color;
 	
 	// steem
 	if (node.id == '#steem'){
@@ -190,10 +196,8 @@ function nodeThreeObject(node){
 		let mesh = new THREE.Mesh(box, materials);
 		mesh.rotation.x = -0.5;
 		group.add(mesh);
-	
-		t.textHeight = Math.cbrt(node.count * STEEM_MULTIPLIER) / 5;
-		t.color = 'dodgerblue';
-		group.add(t);
+		group.add(nodeSpriteText(
+			node.id, 'dodgerblue', Math.cbrt(node.count * STEEM_MULTIPLIER) / 5));
 	
 		setInterval(() => {
 			mesh.rotation.y += 0.03;
@@ -214,9 +218,8 @@ function nodeThreeObject(node){
 			});
 		}
 		group.add(new THREE.Mesh(tagGeometries[val], sphereMaterials[color]));
-		
-		t.textHeight = Math.cbrt(node.count * TAG_MULTIPLIER) / 2;
-		group.add(t);
+		group.add(nodeSpriteText(
+			node.id, node.color, Math.cbrt(node.count * TAG_MULTIPLIER) / 2));
 	}
 	// accounts
 	else {
