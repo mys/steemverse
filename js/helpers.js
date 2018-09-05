@@ -15,7 +15,7 @@ function helpers(){
 		stats.domElement.style.top = '42px';
 		stats.domElement.style.left = '5px';
 		stats.domElement.style.zIndex = 1;
-		document.body.appendChild(stats.dom);
+		document.body.appendChild(stats.domElement);
 		animate();
 	}
 	if (DEBUG & 2){
