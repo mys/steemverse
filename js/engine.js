@@ -15,6 +15,7 @@ var elem;
 var tagGeometries = {}; // indexed by node value
 var accountGeometries = {}; // indexed by node value
 var sphereMaterials = {}; // indexed by color
+var steemTexture = new THREE.TextureLoader().load('img/steem.jpg');
 
 
 function init(){
@@ -181,17 +182,14 @@ function nodeThreeObject(node){
 	
 	// steem
 	if (node.id == '#steem'){
-		// var texture = new THREE.TextureLoader().load('steem.png');
 		let box = new THREE.BoxGeometry(120, 240, 20);
 		let materials = [
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
-			// resize image to 1000x1000
-			// THREE.ImageUtils.loadTexture has been deprecated. Use THREE.TextureLoader() instead.
-			new THREE.MeshStandardMaterial({map: THREE.ImageUtils.loadTexture('img/steem.jpg')}),
-			new THREE.MeshStandardMaterial({map: THREE.ImageUtils.loadTexture('img/steem.jpg')}),
+			new THREE.MeshStandardMaterial({map: steemTexture}),
+			new THREE.MeshStandardMaterial({map: steemTexture}),
 		];
 		let mesh = new THREE.Mesh(box, materials);
 		mesh.rotation.x = -0.5;
