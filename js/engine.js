@@ -113,8 +113,11 @@ function init(){
 						object[index].fz = object[index].z;
 					});
 					loadAccounts();
-				}, 5000);
+				}, 5000);			
 	});
+	
+	// optimize draw calls by +5 FPS
+	Graph.renderer().sortObjects = false;
 
 	// skybox();
 	// startOrbit();
