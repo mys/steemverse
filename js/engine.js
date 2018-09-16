@@ -59,7 +59,7 @@ function init(){
 		.nodeThreeObject(nodeThreeObject)
 
 		// a little upwards and more away
-		.cameraPosition({ z: 1200 });
+		.cameraPosition({ z: 7500 });
 
 	Graph.d3Force('charge', null);
 	Graph.d3Force('center', null);
@@ -113,7 +113,15 @@ function init(){
 						object[index].fz = object[index].z;
 					});
 					loadAccounts();
-				}, 5000);			
+				}, 5000);
+		
+		// transit camera
+		Graph.cameraPosition(
+			{ z: 750 }, // new position
+			({ x: 0, y: 0, z: 0 }), // lookAt ({ x, y, z })
+			5500 // ms transition duration
+		);
+		loadingBar(1);
 	});
 	
 	// optimize draw calls by +5 FPS
@@ -121,6 +129,17 @@ function init(){
 
 	// skybox();
 	// startOrbit();
+}
+
+
+function loadingBar(percent){
+	$('#progressvalue').attr('aria-valuenow', percent).css('width', percent + '%');
+	if (percent == 100)
+		$('#progressbar').attr('style', 'display:none');
+	else
+		setTimeout(function() {
+			loadingBar(percent + 1);
+		}, 75);
 }
 
 
@@ -271,7 +290,7 @@ function focusCamera(node) {
 	var distance = node.id.startsWith('#') 
 		? Math.cbrt(node.count * TAG_MULTIPLIER) 
 		: Math.cbrt(node.sp * ACCOUNT_MULTIPLIER);
-	distance *= 15;
+	distance *= 13;
 	const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z)
 
 	if (node.id.startsWith('#'))
