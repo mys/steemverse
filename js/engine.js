@@ -33,6 +33,8 @@ function init(){
 		.nodeLabel(nodeLabel)
 		.linkVisibility(link => typeof link.source === 'string' ? link.source.startsWith('#') : link.source.id.startsWith('#'))
 		.linkOpacity(0.2)
+		.linkDirectionalParticleWidth(2)
+		.linkDirectionalParticleColor(link => link.source.color)
 		.nodeAutoColorBy(node => node.category ? node.category : node.id)
 		.onNodeClick(focusCamera)
 		.onNodeHover((node, nodePre) => {
@@ -160,6 +162,7 @@ function loadAccounts(){
 			nodes: [...Graph.graphData().nodes, ...data.nodes],
 			links: [...Graph.graphData().links, ...data.links]
 		});
+		Graph.linkDirectionalParticles(2);
 	});
 }
 
