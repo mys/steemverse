@@ -27,6 +27,7 @@ function init(){
 		.graphData(initData)
 		.enableNodeDrag(false)
 		.cooldownTime(5000)
+		.backgroundColor('black')
 		.nodeRelSize(SIZE_MULTIPLIER)
 		.nodeId('id')
 		.nodeLabel(nodeLabel)
@@ -127,7 +128,7 @@ function init(){
 	// optimize draw calls by +5 FPS
 	Graph.renderer().sortObjects = false;
 
-	// skybox();
+	skybox();
 	// startOrbit();
 }
 
@@ -164,15 +165,10 @@ function loadAccounts(){
 
 
 function skybox(){
-	// var directions  = ["s_px.jpg", "s_nx.jpg", "s_py.jpg", "s_ny.jpg", "s_pz.jpg", "s_nz.jpg"];
-	// var directions  = ["DeepSpaceGreen/leftImage.png", "DeepSpaceGreen/rightImage.png", "DeepSpaceGreen/upImage.png", "DeepSpaceGreen/downImage.png", "DeepSpaceGreen/frontImage.png", "DeepSpaceGreen/backImage.png"];
-	// var directions  = ["Stars01/leftImage.png", "Stars01/rightImage.png", "Stars01/upImage.png", "Stars01/downImage.png", "Stars01/frontImage.png", "Stars01/backImage.png"];
-	var directions  = ["BlueNebular/BlueNebular_left.jpg", "BlueNebular/BlueNebular_right.jpg", "BlueNebular/BlueNebular_top.jpg", "BlueNebular/BlueNebular_bottom.jpg", "BlueNebular/BlueNebular_front.jpg", "BlueNebular/BlueNebular_back.jpg"];
+	var directions  = ["img/skyboxes/Stars01/leftImage.png", "img/skyboxes/Stars01/rightImage.png", "img/skyboxes/Stars01/upImage.png", "img/skyboxes/Stars01/downImage.png", "img/skyboxes/Stars01/frontImage.png", "img/skyboxes/Stars01/backImage.png"];
 	var reflectionCube = new THREE.CubeTextureLoader().load(directions, function(){
 		reflectionCube.format = THREE.RGBFormat;
-		console.log('background loading')
 		scene.background = reflectionCube;
-		console.log('background loaded')
 	});
 }
 
