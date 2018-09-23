@@ -6,7 +6,7 @@
 	"3d-force-graph": "^1.39.0",
 	"d3-force-3d": "^1.1.0",
 	"d3-octree": "^0.1.2",
-	"three": "^0.95.0",
+	"three": "^0.96.0",
 	"d3-fetch": "^1.1.0",
 	"stats-js": "^1.0.0-alpha1",
 	"three-spritetext": "github:mys/three-spritetext#expand-v",

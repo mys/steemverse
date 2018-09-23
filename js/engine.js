@@ -15,6 +15,7 @@ var elem;
 var tagGeometries = {}; // indexed by node value
 var accountGeometries = {}; // indexed by node value
 var sphereMaterials = {}; // indexed by color
+var steemTexture = new THREE.TextureLoader().load('img/steem.jpg');
 
 
 function init(){
@@ -26,11 +27,14 @@ function init(){
 		.graphData(initData)
 		.enableNodeDrag(false)
 		.cooldownTime(5000)
+		.backgroundColor('black')
 		.nodeRelSize(SIZE_MULTIPLIER)
 		.nodeId('id')
 		.nodeLabel(nodeLabel)
 		.linkVisibility(link => typeof link.source === 'string' ? link.source.startsWith('#') : link.source.id.startsWith('#'))
 		.linkOpacity(0.2)
+		.linkDirectionalParticleWidth(2)
+		.linkDirectionalParticleColor(link => link.source.color)
 		.nodeAutoColorBy(node => node.category ? node.category : node.id)
 		.onNodeClick(focusCamera)
 		.onNodeHover((node, nodePre) => {
@@ -58,7 +62,7 @@ function init(){
 		.nodeThreeObject(nodeThreeObject)
 
 		// a little upwards and more away
-		.cameraPosition({ z: 1200 });
+		.cameraPosition({ z: 7500 });
 
 	Graph.d3Force('charge', null);
 	Graph.d3Force('center', null);
@@ -113,10 +117,32 @@ function init(){
 					});
 					loadAccounts();
 				}, 5000);
+		
+		// transit camera
+		Graph.cameraPosition(
+			{ z: 750 }, // new position
+			({ x: 0, y: 0, z: 0 }), // lookAt ({ x, y, z })
+			5500 // ms transition duration
+		);
+		loadingBar(1);
 	});
+	
+	// optimize draw calls by +5 FPS
+	Graph.renderer().sortObjects = false;
 
-	// skybox();
+	skybox();
 	// startOrbit();
+}
+
+
+function loadingBar(percent){
+	$('#progressvalue').attr('aria-valuenow', percent).css('width', percent + '%');
+	if (percent == 100)
+		$('#progressbar').attr('style', 'display:none');
+	else
+		setTimeout(function() {
+			loadingBar(percent + 1);
+		}, 75);
 }
 
 
@@ -136,20 +162,16 @@ function loadAccounts(){
 			nodes: [...Graph.graphData().nodes, ...data.nodes],
 			links: [...Graph.graphData().links, ...data.links]
 		});
+		Graph.linkDirectionalParticles(2);
 	});
 }
 
 
 function skybox(){
-	// var directions  = ["s_px.jpg", "s_nx.jpg", "s_py.jpg", "s_ny.jpg", "s_pz.jpg", "s_nz.jpg"];
-	// var directions  = ["DeepSpaceGreen/leftImage.png", "DeepSpaceGreen/rightImage.png", "DeepSpaceGreen/upImage.png", "DeepSpaceGreen/downImage.png", "DeepSpaceGreen/frontImage.png", "DeepSpaceGreen/backImage.png"];
-	// var directions  = ["Stars01/leftImage.png", "Stars01/rightImage.png", "Stars01/upImage.png", "Stars01/downImage.png", "Stars01/frontImage.png", "Stars01/backImage.png"];
-	var directions  = ["BlueNebular/BlueNebular_left.jpg", "BlueNebular/BlueNebular_right.jpg", "BlueNebular/BlueNebular_top.jpg", "BlueNebular/BlueNebular_bottom.jpg", "BlueNebular/BlueNebular_front.jpg", "BlueNebular/BlueNebular_back.jpg"];
+	var directions  = ["img/skyboxes/Stars01/leftImage.png", "img/skyboxes/Stars01/rightImage.png", "img/skyboxes/Stars01/upImage.png", "img/skyboxes/Stars01/downImage.png", "img/skyboxes/Stars01/frontImage.png", "img/skyboxes/Stars01/backImage.png"];
 	var reflectionCube = new THREE.CubeTextureLoader().load(directions, function(){
 		reflectionCube.format = THREE.RGBFormat;
-		console.log('background loading')
 		scene.background = reflectionCube;
-		console.log('background loaded')
 	});
 }
 
@@ -167,33 +189,34 @@ function nodeLabel(node){
 }
 
 
+function nodeSpriteText(text, color, height){
+	let spriteText = new SpriteText(text);
+	spriteText.fontSize = 36;
+	spriteText.color = color;
+	spriteText.textHeight = height;
+	return spriteText;
+}
+
+
 function nodeThreeObject(node){
 	let group = new THREE.Group();
-	let t = new SpriteText(node.id);
-	t.fontSize = 36;
-	t.color = node.color;
 	
 	// steem
 	if (node.id == '#steem'){
-		// var texture = new THREE.TextureLoader().load('steem.png');
 		let box = new THREE.BoxGeometry(120, 240, 20);
 		let materials = [
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
 			new THREE.MeshStandardMaterial({color: 0x333333}),
-			// resize image to 1000x1000
-			// THREE.ImageUtils.loadTexture has been deprecated. Use THREE.TextureLoader() instead.
-			new THREE.MeshStandardMaterial({map: THREE.ImageUtils.loadTexture('img/steem.jpg')}),
-			new THREE.MeshStandardMaterial({map: THREE.ImageUtils.loadTexture('img/steem.jpg')}),
+			new THREE.MeshStandardMaterial({map: steemTexture}),
+			new THREE.MeshStandardMaterial({map: steemTexture}),
 		];
 		let mesh = new THREE.Mesh(box, materials);
 		mesh.rotation.x = -0.5;
 		group.add(mesh);
-	
-		t.textHeight = Math.cbrt(node.count * STEEM_MULTIPLIER) / 5;
-		t.color = 'dodgerblue';
-		group.add(t);
+		group.add(nodeSpriteText(
+			node.id, 'dodgerblue', Math.cbrt(node.count * STEEM_MULTIPLIER) / 5));
 	
 		setInterval(() => {
 			mesh.rotation.y += 0.03;
@@ -214,9 +237,8 @@ function nodeThreeObject(node){
 			});
 		}
 		group.add(new THREE.Mesh(tagGeometries[val], sphereMaterials[color]));
-		
-		t.textHeight = Math.cbrt(node.count * TAG_MULTIPLIER) / 2;
-		group.add(t);
+		group.add(nodeSpriteText(
+			node.id, node.color, Math.cbrt(node.count * TAG_MULTIPLIER) / 2));
 	}
 	// accounts
 	else {
@@ -267,7 +289,7 @@ function focusCamera(node) {
 	var distance = node.id.startsWith('#') 
 		? Math.cbrt(node.count * TAG_MULTIPLIER) 
 		: Math.cbrt(node.sp * ACCOUNT_MULTIPLIER);
-	distance *= 15;
+	distance *= 13;
 	const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z)
 
 	if (node.id.startsWith('#'))
